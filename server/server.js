@@ -20,10 +20,11 @@ const corsOptions ={
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200,
 }
-app.use(cors())
+app.use(cors(corsOptions));
+app.use(cors());
 
 // Mongoose connect
-const mongoDB = process.env.ATLAS_URI;
+const mongoDB = 'mongodb+srv://Dilip:imageupload123@cluster0.krtlwb0.mongodb.net/?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, () => {
     console.log('DB Connected')
 })
@@ -83,7 +84,9 @@ app.post('/addactivity', (req, res) => {
                 activity: req.body.activity,
                 status: req.body.status,
                 timeTaken: req.body.timeTaken,
-                action: req.body.action
+                action: req.body.action,
+                startTime: "",
+                endTime: ""
             }).then(() => {
                 res.status(200).send('Activity Added')
             }).catch(err => {
@@ -121,6 +124,39 @@ app.get('/activity', (req, res) => {
         }
     } else {
         res.status(200).send('Authkey not found')
+    }
+});
+
+app.put('/addstarttime/:id', async (req, res) => {
+    const startTime = new Date().getTime();
+    console.log(startTime)
+    await toDoModel.findByIdAndUpdate(req.params.id, {startTime: startTime, status: "Pending"}, (err, docs) => {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            console.log("Updated :", docs)
+            res.status(200).send('Data Updated')
+        }
+    })
+})
+
+app.put('/addendtime/:id', async (req, res) => {
+    try {
+        const endTime = new Date().getTime();
+        console.log(endTime)
+        await toDoModel.findByIdAndUpdate(req.params.id, {endTime: endTime, status: "Completed"}, (err, docs) => {
+            if(err) {
+                console.log(err);
+            }
+            else {
+                console.log("Updated :", docs)
+            }
+        })
+
+    }
+    catch(err) {
+        console.log(err);
     }
 });
 

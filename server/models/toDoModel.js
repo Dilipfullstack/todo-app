@@ -5,7 +5,9 @@ const toDoSchema = mongoose.Schema({
     activity: String,
     status: String,
     timeTaken: String,
-    action: String
+    action: String,
+    startTime: String,
+    endTime: String
 })
 
 const ToDoModel = mongoose.model("toDoList", toDoSchema);
